@@ -18,7 +18,7 @@ def create(path="./"):
 
     f = open(path, "w")
     print(f"Writing to file {f.name}")
-    f.writelines(lines);
+    f.writelines(lines)
     f.close()
 
 # Create obj.names file 
