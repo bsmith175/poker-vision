@@ -3,7 +3,10 @@ import os
 from PIL import Image
 
 def main():
-    folder_path = './data/'
+    #folder paths to process small data, training data, and testing data. 
+    #folder_path = './data/'
+    #folder_path = './data/train/' 
+    folder_path = './data/test/'
     for filename in os.listdir(folder_path):
         if not filename.endswith('.xml'): continue
         fullname = os.path.join(folder_path, filename)
