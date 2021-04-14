@@ -1,12 +1,17 @@
 import xml.etree.cElementTree as ET
 import os
+from PIL import Image
 
 def main():
     folder_path = './data/'
     for filename in os.listdir(folder_path):
         if not filename.endswith('.xml'): continue
         fullname = os.path.join(folder_path, filename)
-        f = open(filename[:-4]+".txt", "w+")
+        f = open(folder_path+filename[:-4]+".txt", "w+")
+
+        image = Image.open(folder_path+filename[:-4]+'.jpg')
+        w, h = image.size
+
         tree = ET.parse(fullname)
             # path = '001290138'
             # tree = ET.parse('./data/'+ path + '.xml')
@@ -26,10 +31,11 @@ def main():
                         # print(grandchild[3].tag, grandchild[3].text) #y max
                         x_dif = int(str(grandchild[2].text)) - int(str(grandchild[0].text))
                         y_dif = int(str(grandchild[3].text)) - int(str(grandchild[1].text))
-                        x_center = str(int(str(grandchild[2].text)) - (x_dif / 2))
-                        y_center = str(int(str(grandchild[3].text)) - (y_dif / 2))
-                        width = str(x_dif)
-                        height = str(y_dif)
+                        
+                        x_center = str((int(str(grandchild[2].text)) - (x_dif / 2)) / w)
+                        y_center = str((int(str(grandchild[3].text)) - (y_dif / 2)) / h)
+                        width = str(x_dif / w)
+                        height = str(y_dif / h)
                         line = line +' '+ x_center +' '+  y_center +' '+  width +' '+  height
                         #returning last card twice: the top card's suit and label 
                         #are visible at the top and bottom
