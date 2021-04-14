@@ -1,10 +1,6 @@
 import argparse
 import os
 
-num_classes = 52
-suits = ["d", "h", "c", "s"]
-cards = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
-
 def create(path="data/obj"):
     lines = []
     if (path == None):
