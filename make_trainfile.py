@@ -9,7 +9,7 @@ def create(path="data/obj"):
     for filename in os.listdir(path):
         if not filename.endswith('.jpg'): continue
         fullname = os.path.join(path, filename)
-        lines.append(fullname)
+        lines.append(fullname + "\n")
 
 
     print(f"Found {len(lines)} images")
