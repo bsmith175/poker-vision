@@ -36,7 +36,7 @@ def arg_parse():
                         default = "cfg/obj-yolov3.cfg", type = str)
     parser.add_argument("--weights", dest = 'weightsfile', help = 
                         "weightsfile",
-                        default = "obj-yolov3_last.weights", type = str)
+                        default = "weights/obj-yolov3_last.weights", type = str)
     parser.add_argument("--reso", dest = 'reso', help = 
                         "Input resolution of the network. Increase to increase accuracy. Decrease to increase speed",
                         default = "608", type = str)
