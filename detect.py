@@ -200,6 +200,7 @@ def write(x, results):
     return img
 
 
+breakpoint()
 list(map(lambda x: write(x, loaded_ims), output))
 
 det_names = pd.Series(imlist).apply(lambda x: "{}/det_{}".format(args.det,x.split("/")[-1]))
