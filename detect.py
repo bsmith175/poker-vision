@@ -57,6 +57,16 @@ def init_detector(args):
     if not os.path.exists(args.det):
         os.makedirs(args.det)
 
+    try:
+        imlist = [osp.join(osp.realpath('.'), images, img) for img in os.listdir(images)]
+    except NotADirectoryError:
+        imlist = []
+        imlist.append(osp.join(osp.realpath('.'), images))
+    except FileNotFoundError:
+        print ("No file or directory with the name {}".format(images))
+        exit()
+    loaded_ims = [cv2.imread(x) for x in imlist]
+        
     #Set up the neural network
     print("Loading network.....")
     model = Darknet(args.cfgfile)
@@ -73,25 +83,15 @@ def init_detector(args):
         model.cuda()
     #Set the model in evaluation mode
     model.eval()
-    return images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim
+    return images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims
 
 
-def get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim):
+def get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims):
 
     read_dir = time.time()
     #Detection phase
-    try:
-        imlist = [osp.join(osp.realpath('.'), images, img) for img in os.listdir(images)]
-    except NotADirectoryError:
-        imlist = []
-        imlist.append(osp.join(osp.realpath('.'), images))
-    except FileNotFoundError:
-        print ("No file or directory with the name {}".format(images))
-        exit()
-        
 
     load_batch = time.time()
-    loaded_ims = [cv2.imread(x) for x in imlist]
 
     im_batches = list(map(prep_image, loaded_ims, [inp_dim for x in range(len(imlist))]))
     im_dim_list = [(x.shape[1], x.shape[0]) for x in loaded_ims]
@@ -173,11 +173,11 @@ def get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_class
     for i in range(output.shape[0]):
         output[i, [1,3]] = torch.clamp(output[i, [1,3]], 0.0, im_dim_list[i,0])
         output[i, [2,4]] = torch.clamp(output[i, [2,4]], 0.0, im_dim_list[i,1])
-    return output, loaded_ims
+    return output
     
 
 # det_dir is args.det
-def draw_res(loaded_ims, classes, det_dir):
+def draw_res(output, loaded_ims, classes, det_dir, imlist):
     output_recast = time.time()
     class_load = time.time()
     colors = pkl.load(open("pallete", "rb"))
@@ -228,9 +228,9 @@ def draw_res(loaded_ims, classes, det_dir):
 
 def main():
     args = arg_parse()
-    images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim = init_detector(args) 
-    output, loaded_ims = get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim)
-    draw_res(loaded_ims, classes, args.det)
+    images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims = init_detector(args) 
+    output = get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
+    draw_res(output, loaded_ims, classes, args.det, imlist)
 
-if __name__ = "__main__":
+if __name__ == "__main__":
     main()
