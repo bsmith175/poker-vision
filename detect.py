@@ -28,7 +28,6 @@ def arg_parse():
     parser.add_argument("--det", dest = 'det', help = 
                         "Image / Directory to store detections to",
                         default = "res", type = str)
-    parser.add_argument("--bs", dest = "bs", help = "Batch size", default = 1)
     parser.add_argument("--confidence", dest = "confidence", help = "Object Confidence to filter predictions", default = 0.5)
     parser.add_argument("--nms_thresh", dest = "nms_thresh", help = "NMS Threshhold", default = 0.4)
     parser.add_argument("--cfg", dest = 'cfgfile', help = 
@@ -56,8 +55,8 @@ def get_imlist(images):
     return imlist
 
 # args must include fields: images, bs, confidence, nms_thresh, det, cfgfile, weightsfile, reso 
-def init_detector(imlist, bs, confidence, nms_thresh, det, cfgfile, weightsfile, reso):
-    batch_size = int(bs)
+def init_detector(imlist, confidence, nms_thresh, det, cfgfile, weightsfile, reso):
+    batch_size = 1
     confidence = float(confidence)
     nms_thresh = float(nms_thresh)
     CUDA = torch.cuda.is_available()
@@ -94,7 +93,6 @@ def get_output(batch_size, confidence, nms_thresh, CUDA, num_classes, classes, m
     im_dim_list = [(x.shape[1], x.shape[0]) for x in loaded_ims]
     im_dim_list = torch.FloatTensor(im_dim_list).repeat(1,2)
 
-
     leftover = 0
     if (len(im_dim_list) % batch_size):
         leftover = 1
@@ -105,7 +103,6 @@ def get_output(batch_size, confidence, nms_thresh, CUDA, num_classes, classes, m
                             len(im_batches))]))  for i in range(num_batches)]  
 
     write = 0
-
 
     if CUDA:
         im_dim_list = im_dim_list.cuda()
@@ -173,13 +170,11 @@ def get_output(batch_size, confidence, nms_thresh, CUDA, num_classes, classes, m
     return output
     
 
-# det_dir is args.det
 def draw_res(output, loaded_ims, classes, det_dir, imlist):
     output_recast = time.time()
     class_load = time.time()
     colors = pkl.load(open("pallete", "rb"))
 
-    # draw = time.time()
     def write(x, results):
         # top right corner
         c1 = tuple(x[1:3].int())
@@ -197,27 +192,11 @@ def draw_res(output, loaded_ims, classes, det_dir, imlist):
         return img
 
 
-    list(map(lambda x: write(x, loaded_ims), output))
+    map(lambda x: write(x, loaded_ims), output)
 
     det_names = pd.Series(imlist).apply(lambda x: "{}/det_{}".format(det_dir,x.split("/")[-1]))
 
-    list(map(cv2.imwrite, det_names, loaded_ims))
-
-
-    # end = time.time()
-
-    # print("SUMMARY")
-    # print("----------------------------------------------------------")
-    # print("{:25s}: {}".format("Task", "Time Taken (in seconds)"))
-    # print()
-    # print("{:25s}: {:2.3f}".format("Reading addresses", load_batch - read_dir))
-    # print("{:25s}: {:2.3f}".format("Loading batch", start_det_loop - load_batch))
-    # print("{:25s}: {:2.3f}".format("Detection (" + str(len(imlist)) +  " images)", output_recast - start_det_loop))
-    # print("{:25s}: {:2.3f}".format("Output Processing", class_load - output_recast))
-    # print("{:25s}: {:2.3f}".format("Drawing Boxes", end - draw))
-    # print("{:25s}: {:2.3f}".format("Average time_per_img", (end - load_batch)/len(imlist)))
-    # print("----------------------------------------------------------")
-
+    map(cv2.imwrite, det_names, loaded_ims)
 
     torch.cuda.empty_cache()
 
@@ -225,7 +204,7 @@ def main():
     args = arg_parse()
     imlist = get_imlist(args.images)
     batch_size, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims \
-        = init_detector(imlist, args.bs, args.confidence, args.nms_thresh, args.det, args.cfgfile, args.weightsfile, args.reso) 
+        = init_detector(imlist, args.confidence, args.nms_thresh, args.det, args.cfgfile, args.weightsfile, args.reso) 
     output = get_output(batch_size, args.confidence, args.nms_thresh, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
     draw_res(output, loaded_ims, classes, args.det, imlist)
 
