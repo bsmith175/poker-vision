@@ -10,7 +10,8 @@ import cv2
 # converts class number to tuple of (suit, value)
 def class_num_to_tuple(class_n):
     suit = int(class_n / 13)
-    value = class_n % 13
+    #cast to convert from tensor
+    value = int(class_n % 13)
     return (suit, value)
 
 def unique(tensor):

@@ -4,7 +4,7 @@ from util import class_num_to_tuple
 from os import path as osp
 import argparse
 
-CONF = .4
+CONF = .5
 NMS_THRESH = .4
 RES = "./res"
 CFG = "cfg/obj-yolov3.cfg"
@@ -16,16 +16,16 @@ def score_hand(hole_img, community_img=None):
     bs = 1
     reso = "608"
     if community_img:
-        imlist = [osp.join(osp.realpath('.'), hole_img), osp.join(osp.realpath('.'), hole_img)]
+        imlist = [osp.join(osp.realpath('.'), hole_img), osp.join(osp.realpath('.'), community_img)]
     if not community_img:
         imlist = [osp.join(osp.realpath('.'), hole_img)]
 
     batch_size, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims \
         = init_detector(imlist, bs, CONF, NMS_THRESH, RES, CFG, WEIGHTS, reso)
-    output1 = get_output(batch_size, CONF, NMS_THRESH, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
+    output = get_output(batch_size, CONF, NMS_THRESH, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
     classes = output[:, -1]
     cards = set()
-    for i in range(length(classes)):
+    for i in range(len(classes)):
         cards.add(class_num_to_tuple(classes[i]))
     print(list(cards))
     return list(cards)
