@@ -310,7 +310,6 @@ class Darknet(nn.Module):
                 #Do the same as above for weights
                 conv_weights = torch.from_numpy(weights[ptr:ptr+num_weights])
                 ptr = ptr + num_weights
-                print(conv_weights.shape)
                 # if (conv_weights.shape == torch.Size([3403291])):
                 #     breakpoint()
                 conv_weights = conv_weights.view_as(conv.weight.data)

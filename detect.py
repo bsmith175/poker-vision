@@ -230,6 +230,7 @@ def main():
     args = arg_parse()
     images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims = init_detector(args) 
     output = get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
+    breakpoint()
     draw_res(output, loaded_ims, classes, args.det, imlist)
 
 if __name__ == "__main__":
