@@ -6,8 +6,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 from util import * 
-
-
+# based on https://blog.paperspace.com/how-to-implement-a-yolo-object-detector-in-pytorch/
 
 def get_test_input():
     img = cv2.imread("dog-cycle-car.png")
@@ -164,9 +163,9 @@ def create_modules(blocks):
         
     return (net_info, module_list)
 
-class Darknet(nn.Module):
+class Yolo(nn.Module):
     def __init__(self, cfgfile):
-        super(Darknet, self).__init__()
+        super(Yolo, self).__init__()
         self.blocks = parse_cfg(cfgfile)
         self.net_info, self.module_list = create_modules(self.blocks)
         
@@ -310,7 +309,6 @@ class Darknet(nn.Module):
                 #Do the same as above for weights
                 conv_weights = torch.from_numpy(weights[ptr:ptr+num_weights])
                 ptr = ptr + num_weights
-                print(conv_weights.shape)
                 # if (conv_weights.shape == torch.Size([3403291])):
                 #     breakpoint()
                 conv_weights = conv_weights.view_as(conv.weight.data)

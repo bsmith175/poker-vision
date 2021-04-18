@@ -7,6 +7,12 @@ from torch.autograd import Variable
 import numpy as np
 import cv2 
 
+# converts class number to tuple of (suit, value)
+def class_num_to_tuple(class_n):
+    suit = int(class_n / 13)
+    value = class_n % 13
+    return (suit, value)
+
 def unique(tensor):
     tensor_np = tensor.cpu().numpy()
     unique_np = np.unique(tensor_np)
@@ -16,6 +22,10 @@ def unique(tensor):
     tensor_res.copy_(unique_tensor)
     return tensor_res
 
+def load_classes(namesfile):
+    fp = open(namesfile, "r")
+    names = fp.read().split("\n")[:-1]
+    return names
 
 def bbox_iou(box1, box2):
     """
@@ -209,7 +219,3 @@ def prep_image(img, inp_dim):
     img = torch.from_numpy(img).float().div(255.0).unsqueeze(0)
     return img
 
-def load_classes(namesfile):
-    fp = open(namesfile, "r")
-    names = fp.read().split("\n")[:-1]
-    return names

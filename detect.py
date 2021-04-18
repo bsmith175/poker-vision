@@ -9,7 +9,7 @@ from util import *
 import argparse
 import os 
 import os.path as osp
-from darknet import Darknet
+from model import Yolo
 import pickle as pkl
 import pandas as pd
 import random
@@ -43,20 +43,8 @@ def arg_parse():
     
     return parser.parse_args()
 
-# args = arg_parse()
-def init_detector(args):
-    images = args.images
-    batch_size = int(args.bs)
-    confidence = float(args.confidence)
-    nms_thesh = float(args.nms_thresh)
-    start = 0
-    CUDA = torch.cuda.is_available()
-    num_classes = 52
-    classes = load_classes("obj.names")
-
-    if not os.path.exists(args.det):
-        os.makedirs(args.det)
-
+# returns imlist given relative path of image directory
+def get_imlist(images):
     try:
         imlist = [osp.join(osp.realpath('.'), images, img) for img in os.listdir(images)]
     except NotADirectoryError:
@@ -65,15 +53,29 @@ def init_detector(args):
     except FileNotFoundError:
         print ("No file or directory with the name {}".format(images))
         exit()
+    return imlist
+
+# args must include fields: images, bs, confidence, nms_thresh, det, cfgfile, weightsfile, reso 
+def init_detector(imlist, bs, confidence, nms_thresh, det, cfgfile, weightsfile, reso):
+    batch_size = int(bs)
+    confidence = float(confidence)
+    nms_thesh = float(nms_thresh)
+    CUDA = torch.cuda.is_available()
+    num_classes = 52
+    classes = load_classes("obj.names")
+
+    if not os.path.exists(det):
+        os.makedirs(det)
+
     loaded_ims = [cv2.imread(x) for x in imlist]
         
     #Set up the neural network
     print("Loading network.....")
-    model = Darknet(args.cfgfile)
-    model.load_weights(args.weightsfile)
+    model = Yolo(cfgfile)
+    model.load_weights(weightsfile)
     print("Network successfully loaded")
 
-    model.net_info["height"] = args.reso
+    model.net_info["height"] = reso
     inp_dim = int(model.net_info["height"])
     assert inp_dim % 32 == 0 
     assert inp_dim > 32
@@ -81,17 +83,12 @@ def init_detector(args):
     #If there's a GPU availible, put the model on GPU
     if CUDA:
         model.cuda()
-    #Set the model in evaluation mode
+    #Put model in evaluation mode
     model.eval()
-    return images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims
+    return batch_size, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims
 
 
-def get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims):
-
-    read_dir = time.time()
-    #Detection phase
-
-    load_batch = time.time()
+def get_output(batch_size, confidence, nms_thesh, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims):
 
     im_batches = list(map(prep_image, loaded_ims, [inp_dim for x in range(len(imlist))]))
     im_dim_list = [(x.shape[1], x.shape[0]) for x in loaded_ims]
@@ -182,9 +179,7 @@ def draw_res(output, loaded_ims, classes, det_dir, imlist):
     class_load = time.time()
     colors = pkl.load(open("pallete", "rb"))
 
-    draw = time.time()
-
-
+    # draw = time.time()
     def write(x, results):
         # top right corner
         c1 = tuple(x[1:3].int())
@@ -209,7 +204,7 @@ def draw_res(output, loaded_ims, classes, det_dir, imlist):
     list(map(cv2.imwrite, det_names, loaded_ims))
 
 
-    end = time.time()
+    # end = time.time()
 
     # print("SUMMARY")
     # print("----------------------------------------------------------")
@@ -228,8 +223,10 @@ def draw_res(output, loaded_ims, classes, det_dir, imlist):
 
 def main():
     args = arg_parse()
-    images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims = init_detector(args) 
-    output = get_output(images, batch_size, confidence, nms_thesh, start, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
+    imlist = get_imlist(args.images)
+    batch_size, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims \
+        = init_detector(imlist, args.bs, args.confidence, args.nms_thresh, args.det, args.weightsfile, args.reso) 
+    output = get_output(batch_size, confidence, nms_thesh, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
     draw_res(output, loaded_ims, classes, args.det, imlist)
 
 if __name__ == "__main__":
