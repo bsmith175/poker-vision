@@ -19,6 +19,7 @@ def create(path="data/obj"):
     f.close()
 
 # Create train.txt file 
+# run this file in the root darknet directory
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dir", help="Path to the image directory, relative to darknet executable (default ./data/obj)")
