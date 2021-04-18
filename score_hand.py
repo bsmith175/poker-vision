@@ -24,9 +24,11 @@ def score_hand(hole_img, community_img=None):
         = init_detector(imlist, bs, CONF, NMS_THRESH, RES, CFG, WEIGHTS, reso)
     output1 = get_output(batch_size, CONF, NMS_THRESH, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
     classes = output[:, -1]
-    cards = []
+    cards = set()
     for i in range(length(classes)):
-        cards.append(class_num_to_tuple(classes[i]))
+        cards.add(class_num_to_tuple(classes[i]))
+    print(list(cards))
+    return list(cards)
 
 def main():
     parser = argparse.ArgumentParser()
