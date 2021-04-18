@@ -59,7 +59,7 @@ def get_imlist(images):
 def init_detector(imlist, bs, confidence, nms_thresh, det, cfgfile, weightsfile, reso):
     batch_size = int(bs)
     confidence = float(confidence)
-    nms_thesh = float(nms_thresh)
+    nms_thresh = float(nms_thresh)
     CUDA = torch.cuda.is_available()
     num_classes = 52
     classes = load_classes("obj.names")
@@ -88,7 +88,7 @@ def init_detector(imlist, bs, confidence, nms_thresh, det, cfgfile, weightsfile,
     return batch_size, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims
 
 
-def get_output(batch_size, confidence, nms_thesh, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims):
+def get_output(batch_size, confidence, nms_thresh, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims):
 
     im_batches = list(map(prep_image, loaded_ims, [inp_dim for x in range(len(imlist))]))
     im_dim_list = [(x.shape[1], x.shape[0]) for x in loaded_ims]
@@ -119,7 +119,7 @@ def get_output(batch_size, confidence, nms_thesh, CUDA, num_classes, classes, mo
         with torch.no_grad():
             prediction = model(Variable(batch), CUDA)
 
-        prediction = write_results(prediction, confidence, num_classes, nms_conf = nms_thesh)
+        prediction = write_results(prediction, confidence, num_classes, nms_conf = nms_thresh)
 
         end = time.time()
 
@@ -225,8 +225,8 @@ def main():
     args = arg_parse()
     imlist = get_imlist(args.images)
     batch_size, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims \
-        = init_detector(imlist, args.bs, args.confidence, args.nms_thresh, args.det, args.weightsfile, args.reso) 
-    output = get_output(batch_size, confidence, nms_thesh, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
+        = init_detector(imlist, args.bs, args.confidence, args.nms_thresh, args.det, args.cfgfile, args.weightsfile, args.reso) 
+    output = get_output(batch_size, args.confidence, args.nms_thresh, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
     draw_res(output, loaded_ims, classes, args.det, imlist)
 
 if __name__ == "__main__":
