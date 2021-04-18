@@ -21,7 +21,7 @@ def score_hand(hole_img, community_img=None):
         imlist = [osp.join(osp.realpath('.'), hole_img)]
 
     batch_size, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims \
-        = init_detector(imlist, bs, CONF, NMS_THRESH, RES, CFG, WEIGHTS, reso)
+        = init_detector(imlist, CONF, NMS_THRESH, RES, CFG, WEIGHTS, reso)
     output = get_output(batch_size, CONF, NMS_THRESH, CUDA, num_classes, classes, model, inp_dim, imlist, loaded_ims)
     classes = output[:, -1]
     cards = set()
