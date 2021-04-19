@@ -4,7 +4,7 @@ from util import class_num_to_tuple
 from os import path as osp
 import argparse
 
-CONF = .5
+CONF = .6
 NMS_THRESH = .4
 RES = "./res"
 CFG = "cfg/obj-yolov3.cfg"

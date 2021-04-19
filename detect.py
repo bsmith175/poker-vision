@@ -28,7 +28,7 @@ def arg_parse():
     parser.add_argument("--det", dest = 'det', help = 
                         "Image / Directory to store detections to",
                         default = "res", type = str)
-    parser.add_argument("--confidence", dest = "confidence", help = "Object Confidence to filter predictions", default = 0.5)
+    parser.add_argument("--confidence", dest = "confidence", help = "Object Confidence to filter predictions", default = 0.6)
     parser.add_argument("--nms_thresh", dest = "nms_thresh", help = "NMS Threshhold", default = 0.4)
     parser.add_argument("--cfg", dest = 'cfgfile', help = 
                         "Config file",
@@ -192,11 +192,12 @@ def draw_res(output, loaded_ims, classes, det_dir, imlist):
         return img
 
 
-    map(lambda x: write(x, loaded_ims), output)
+    list(map(lambda x: write(x, loaded_ims), output))
+    print(det_dir)
 
     det_names = pd.Series(imlist).apply(lambda x: "{}/det_{}".format(det_dir,x.split("/")[-1]))
 
-    map(cv2.imwrite, det_names, loaded_ims)
+    list(map(cv2.imwrite, det_names, loaded_ims))
 
     torch.cuda.empty_cache()
 
