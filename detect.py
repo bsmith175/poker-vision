@@ -14,7 +14,6 @@ import pickle as pkl
 import pandas as pd
 import random
 
-
 # returns imlist given relative path of image directory
 def get_imlist(images):
     try:
@@ -164,11 +163,12 @@ def draw_res(output, loaded_ims, classes, det_dir, imlist):
         return img
 
 
-    map(lambda x: write(x, loaded_ims), output)
+    list(map(lambda x: write(x, loaded_ims), output))
+    print(det_dir)
 
     det_names = pd.Series(imlist).apply(lambda x: "{}/det_{}".format(det_dir,x.split("/")[-1]))
 
-    map(cv2.imwrite, det_names, loaded_ims)
+    list(map(cv2.imwrite, det_names, loaded_ims))
 
     torch.cuda.empty_cache()
 
