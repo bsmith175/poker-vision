@@ -3,6 +3,7 @@ from detect import init_detector, get_output
 from util import class_num_to_tuple
 from os import path as osp
 import argparse
+from probability import choose_function 
 
 CONF = .6
 NMS_THRESH = .4
@@ -12,7 +13,7 @@ WEIGHTS = "weights/obj-yolov3_last.weights"
 
 # param: hole: path to personal hand image
 # param: community: path to community cards image
-def score_hand(hole_img, community_img=None):
+def get_cards(hole_img, community_img=None):
     bs = 1
     reso = "608"
     if community_img:
@@ -37,7 +38,9 @@ def main():
     if (len(args.imgs) > 2):
         print("Error: more than two images. Please enter one image for your hand and optionally an image of the community cards.")
         exit()
-    cards = score_hand(*args.imgs)
+    cards = get_cards(*args.imgs)
+    choose_function(cards)
+    
 
 if __name__ == "__main__":
     main()
