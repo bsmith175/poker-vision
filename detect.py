@@ -54,14 +54,13 @@ def get_imlist(images):
         exit()
     return imlist
 
-# args must include fields: images, bs, confidence, nms_thresh, det, cfgfile, weightsfile, reso 
 def init_detector(imlist, confidence, nms_thresh, det, cfgfile, weightsfile, reso):
     batch_size = 1
     confidence = float(confidence)
     nms_thresh = float(nms_thresh)
     CUDA = torch.cuda.is_available()
     num_classes = 52
-    classes = load_classes("obj.names")
+    classes = load_classes("darknet/obj.names")
 
     if not os.path.exists(det):
         os.makedirs(det)
