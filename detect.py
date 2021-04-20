@@ -187,7 +187,7 @@ def arg_parse():
                         "Image / Directory to store detections to",
                         default = "res", type = str)
     parser.add_argument("--confidence", dest = "confidence", help = "Object Confidence to filter predictions", default = 0.5)
-    parser.add_argument("--nms_thresh", dest = "nms_thresh", help = "NMS Threshhold", default = 0.4)
+    parser.add_argument("--nms_thresh", dest = "nms_thresh", help = "NMS Threshhold", default = 0.5)
     parser.add_argument("--cfg", dest = 'cfgfile', help = 
                         "Config file",
                         default = "cfg/obj-yolov3.cfg", type = str)

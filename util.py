@@ -12,7 +12,10 @@ def class_num_to_tuple(class_n):
     suit = int(class_n / 13)
     #cast to convert from tensor
     value = int(class_n % 13)
-    return (suit, value)
+    value += 1
+    if value == 1:
+        value = 14
+    return (value, suit)
 
 def unique(tensor):
     tensor_np = tensor.cpu().numpy()
