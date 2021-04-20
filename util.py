@@ -7,6 +7,8 @@ from torch.autograd import Variable
 import numpy as np
 import cv2 
 
+card_values = ["err", "err", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king", "ace"]
+suits = ["diamonds", "hearts", "clubs", "spades"]
 # converts class number to tuple of (suit, value)
 def class_num_to_tuple(class_n):
     suit = int(class_n / 13)
