@@ -1,6 +1,6 @@
 import numpy as np
 from detect import init_detector, get_output
-from util import class_num_to_tuple
+from util import class_num_to_tuple, card_values, suits
 from os import path as osp
 import argparse
 from probability import choose_function 
@@ -29,6 +29,9 @@ def get_cards(hole_img, community_img=None):
     for i in range(len(classes)):
         cards.add(class_num_to_tuple(classes[i]))
     print(list(cards))
+    print("Cards detected: ")
+    for (value, suit) in cards:
+        print(f"{card_values[value]} of {suits[suit]}")
     return list(cards)
 
 def main():
