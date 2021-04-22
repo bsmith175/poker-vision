@@ -82,7 +82,7 @@ We trained the model with a batch size of 64 and a batch subdivision of 64, due 
 To perform detection in the application, we decided to use Python instead of Darknet for better extensibility and easier installation. With the help of \hyperlink{https://blog.paperspace.com/how-to-implement-a-yolo-object-detector-in-pytorch/}{this} tutorial, we created a PyTorch model that loads a Darknet YOLO model configuration and translates the model to PyTorch. We implemented a scoring/detection pipeline that can be given paths to images and outputs scores, bounding box and class predictions. 
 
 \subsection{Scoring}
-Discuss scoring algorithm here.
+The scoring algorithm is based on the Chen formula for opening hand scoring. The Chen formula determines the strength of an opening hand by evaluating which features present in the two cards are generally associated with good hands. The result is a score that ranges between -1 and 20 which predicts the relative strength of your hand before any other cards show up. This model was then adapted to accommodation of more cards when the community cards are present. To do this, I adapted the model to assure that scoring accounted for the relative strength of all hands to one another. Hand score in this system ranges well above the original max score of 20, mainly to account for the large jump in possible hand strength when more cards are present. The algorithm also outputs a classifier of hand strength based on the score and tells you what your best hand is based on hand detection helper methods. 
 
 \section{Results}
 
@@ -116,6 +116,9 @@ Consider the following questions to help identify stakeholders:
     \item Who might be harmed by your research findings?
     \item Who might benefit from your research findings?
     \end{itemize}
+ 
+The main stakeholders of this project would be poker players who wish to use this tool to help them play better. This tool has the potential to harm other poker players, purely by giving the player using a tool access to greater knowledge about the strength of their hand. However, most experienced poker players usually have a good sense of how strong their hand is, so this should not impact those players too much. Additionally, this could harm new players, who place too much confidence in the program and do not acknowledge the potential of their opponents. 
+
 
 \item Research or journalism on your broader project topic may have already been conducted. What was the societal impact of existing research? Discuss the implication of this research on your project and consider the following questions to help identify at least one implication. It may affect:
     \begin{itemize}
@@ -128,12 +131,17 @@ Consider the following questions to help identify stakeholders:
 
 \item How could an individual or particular community’s civil rights or civil liberties (such as privacy) be affected by your project?
 
+This project should not ever infringe upon people's civil liberties. The program exclusively focuses around playing cards, and thus should never include or use personal data of the user. 
+
+
 \item If you are using data, what kind of biases might this data contain? Do any of these represent underlying historical or societal biases? How can this bias be mitigated? \\
     Consider the following questions to help you:
     \begin{itemize}
     \item Were the systems and processes used to collect the data biased against any groups?
     \item Is the data being used in a manner agreed to by the individuals who provided the data?
     \end{itemize}
+    
+There are definitely some biases present in the data set we used. Most of the cards present appeared on top of each other rather than fully splayed out. Additionally, many of the images were comprised of three cards all together. In some of the images, two of the same card were present, which is not possible in a standard deck of 52 cards. Lastly, the symbols on the cards appeared the be fairly homogeneous among the data set, and thus, cards with different looking symbols are not accounted for. 
 
 \end{enumerate}
 
@@ -153,7 +161,7 @@ What you did, why it matters, what the impact is going forward.
 
 Please describe in one paragraph per team member what each of you contributed to the project.
 \begin{description}
-\item[Person 1] Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+\item[Andrew Alper] I was responsible for implementing the scoring algorithm. This all appears within probability.py and I am responsible for designing and implementing all the algorithms present, except for the opening hand function, which is based purely on the Chen Formula.  
 \item[Person 2] Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 \item [Person 3] Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
 \item [Person 4] Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
