@@ -207,6 +207,7 @@ def letterbox_image(img, inp_dim):
     new_w = int(img_w * min(w/img_w, h/img_h))
     new_h = int(img_h * min(w/img_w, h/img_h))
     resized_image = cv2.resize(img, (new_w,new_h), interpolation = cv2.INTER_CUBIC)
+    cv2.imwrite("asdfads.jpg", resized_image)
     
     canvas = np.full((inp_dim[1], inp_dim[0], 3), 128)
 

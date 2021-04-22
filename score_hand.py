@@ -28,7 +28,6 @@ def get_cards(hole_img, community_img=None):
     cards = set()
     for i in range(len(classes)):
         cards.add(class_num_to_tuple(classes[i]))
-    print(list(cards))
     print("Cards detected: ")
     for (value, suit) in cards:
         print(f"{card_values[value]} of {suits[suit]}")

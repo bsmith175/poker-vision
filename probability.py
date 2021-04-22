@@ -197,7 +197,7 @@ def best_hand(cards):
     if pairs(cards)[:-2] == (2,2):
         best_hand = "Two Pair"
     if pairs(cards)[:-2] ==(3,1):
-        best_hand = "Threesome"
+        best_hand = "Three of a kind"
     if straight(cards) == 5:
         best_hand = "Straight"
     if flush(cards) == 5:
