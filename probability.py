@@ -59,26 +59,18 @@ def flop_probability(cards):
     else:
         pair_score = math.ceil(pow(pairT[0]-1, 2.5)) + pairT[1]
     score = 0
-    #Step 1: compute highest card
-
-    
-    #Step 2: multiply pairs
- 
-    #Step 3: check for matching suits
     flush_num = flush(cards)
     flush_score = 1
     if flush_num == 4:
         score += 2 * (-len(cards) + 7)
     if flush_num == 5:
         flush_score = 3.5
-    #Step 4: calculate distance between cards
     straight_num = straight(cards)
     straight_score = 1
     if straight_num == 4:
         score += 2 * (-len(cards) + 7)
     if straight_num == 5:
         straight_score = 3.25
-    
     if pair_score != 1 and straight_score == 1 and flush_score == 1:
         highest = pairT[-2]
         if pairT[1] == 2:
@@ -93,12 +85,9 @@ def flop_probability(cards):
         score += 6
     else:
         score = math.ceil(highest/2) + 1
-
     straight_flush_score = straight_score * flush_score
     multiplier = max(pair_score, straight_flush_score)
-    multiplier = multiplier
     score *= multiplier
-    #Step 6 and 7: Round then calculate probability
     print("Hand Score: " + str(score))
     return (math.ceil(score))
 
